@@ -71,13 +71,44 @@ fun Route.beerRoutes() {
 
             beerStorage.find { it.id == id }?.let {
                 call.response.status(HttpStatusCode.Created)
-                call.respond(Response(data = beer))
+                call.respond(Response(data = it))
             } ?: kotlin.run {
                 call.response.status(HttpStatusCode.InternalServerError)
                 call.respond(
                     Response<Beer>(
                         errors = listOf(
                             Error(text = "Cannot create the beer.")
+                        )
+                    )
+                )
+            }
+        }
+
+        delete("{id?}") {
+            val id = call.parameters["id"] ?: kotlin.run {
+                call.response.status(HttpStatusCode.BadRequest)
+                return@delete call.respond(
+                    Response<Beer>(
+                        errors = listOf(
+                            Error(text = "Missing id")
+                        )
+                    )
+                )
+            }
+
+            if (beerStorage.removeIf { it.id.toString() == id }) {
+                call.response.status(HttpStatusCode.Accepted)
+                call.respond(
+                    Response(
+                        data = "Beer with id $id has been removed."
+                    )
+                )
+            } else {
+                call.response.status(HttpStatusCode.Accepted)
+                call.respond(
+                    Response<Beer>(
+                        errors = listOf(
+                            Error(text = "Beer not found.")
                         )
                     )
                 )
