@@ -51,17 +51,7 @@ fun Route.beerRoutes() {
     }
 
     post<resources.Beer> {
-        val beer = kotlin.runCatching { call.receiveNullable<BeerToCreate>() }.getOrNull()
-            ?: kotlin.run {
-                call.response.status(HttpStatusCode.BadRequest)
-                return@post call.respond(
-                    Response<Beer>(
-                        errors = listOf(
-                            Error(text = "Required field not found.")
-                        )
-                    )
-                )
-            }
+        val beer = call.receive<BeerToCreate>()
         val id = Random.nextLong()
 
         beerStorage.add(
