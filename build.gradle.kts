@@ -14,9 +14,11 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
 
+    implementation(libs.ktor.network.tls.certificates)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.resources)
     implementation(libs.ktor.serialization.kotlinx)
     implementation(libs.logback)
 }
